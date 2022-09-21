@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "9f9c1089-8745-4c6a-ba27-1c4647cddb96",
+		"name": "Validation Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23046246"
+	},
+	"item": [
+		{
+			"name": "Create Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"id\", jsonData.data.id);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Successful response\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+							"});\r",
+							"pm.test(\"Check is is not null\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).not.null\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
+							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"salary\": \"{{salary}}\",\r\n    \"age\": \"{{age}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Successful response\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
+							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{newname}}\",\r\n    \"salary\": \"{{newsalary}}\",\r\n    \"age\": \"{{newage}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/update/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							" var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Successful response\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+							"});\r",
+							"pm.test(\"Check employee name\", function () {\r",
+							"    pm.expect(jsonData.data.employee_name).to.equal(\"Dai Rios\")\r",
+							"});\r",
+							"pm.test(\"Check Employee age\", function () {\r",
+							"    pm.expect(jsonData.data.employee_age).to.equal(35)\r",
+							"});\r",
+							"pm.test(\"Check Employee Salary\", function () {\r",
+							"    pm.expect(jsonData.data.employee_salary).to.equal(217500)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Person is Dai Rios\", () => {\r",
+							"  pm.expect(jsonData.data.employee_name).to.eql(\"Dai Rios\");\r",
+							"  pm.expect(jsonData.data.employee_age).to.eql(35);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {\r",
+							"    pm.expect(jsonData.data.employee_name).to.be.a('string');\r",
+							"    pm.expect(jsonData.data.employee_age).to.be.a('number');\r",
+							"    pm.expect(jsonData.data.employee_salary).to.be.a('number');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/employee/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employee",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
+							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/delete/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"delete",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
