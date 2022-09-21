@@ -37,7 +37,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        # commandOptions: '-lock=false'
+        commandOptions: 'terraform force-unlock -force a874a865-d586-bb2b-7452-bd397558c47c'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         environmentServiceNameAzureRM: 'Azure for Students(2)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
     - task: TerraformTaskV3@3
