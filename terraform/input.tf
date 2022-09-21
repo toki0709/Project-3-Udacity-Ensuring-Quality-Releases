@@ -28,11 +28,12 @@ variable "name" {
 variable "admin_username" {
   default = "azureuser"
 }
-# variable "public_key" {}
-# variable "public_key_path" {
-#     description = "Full path incl. filename to the public key."
-#     default = "tf.pub"
-# }
+variable "admin_password" {
+  
+}
+variable "public_key_path" {
+  
+}
 # Network
 variable virtual_network_name {}
 variable address_prefix_test {}
