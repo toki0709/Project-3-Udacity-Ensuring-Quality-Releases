@@ -1,0 +1,153 @@
+name: Azure Pipelines
+variables:
+  python.version: '3.7.6'
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-22.04'
+    steps:
+    # Needed for Terraform VM deployment
+    - task: InstallSSHKey@0
+      inputs:
+        knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDdBpKgatWFZ48d4cnUhMt8qD45pljqmS1qlPikC2A+u+hlQf+pOtUUdrrtmbKWVXzUFLFYqKM9msiIKtuoZnbQj6wyi8cD9CwyNKuUGuD6kvwQrMmfwIuIrtx1wrRQe6MmEDUGmQio0xSrjOSNmAQhxfIqhqhHyFXE6dL46zjVgJHV5xjFAeMwaS2jbTRk08vBWuwx50kcjF00qDg8w2+UkBcI0nLBJ58nmBSuIUO5VZDwDPqZ5W9De6maRDeBd4j9oNH3mByjzx1E4xeluF5S9I2TniY2aogUTv5SCbVioyLYky9G+DKbwu+6L3n3yX4LC/QYWn51FNttD+wmwJ+mvslUKJyZjS4lvT+ktiaIF4elEwInwjk5L9EkThf8ZaYbSuPuwD31sFvxl6vjrp3AluCgtqs4BCmBPDfUhtE7qX6PmCNzuEBpER3fl7ObxW6VLuYZb6M7MLD32K/qs5lEhRaS2k1r/BltzgxS/RJwJa3unLeI7bbuerlSNPvGYgM= tokitazwar71@gmail.com'
+        sshKeySecureFile: 'id_rsa'
+
+    - task: TerraformTaskV3@3
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        backendServiceArm: 'Azure for Students(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
+        backendAzureRmResourceGroupName: 'tfstate'
+        backendAzureRmStorageAccountName: 'tfstate1701416961'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'prod.terraform.tfstate'
+    - task: TerraformTaskV3@3
+      displayName: Terraform Validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    - task: TerraformTaskV3@3
+      displayName: Terraform Plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-lock=false'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        environmentServiceNameAzureRM: 'Azure for Students(2)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
+    - task: TerraformTaskV3@3
+      displayName: Terraform Apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        environmentServiceNameAzureRM: 'Azure for Students(3)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      inputs:
+        rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload Package'
+      artifact: drop-fakerestapi
+    - task: ArchiveFiles@2
+      displayName: 'Selenium'
+      inputs:
+        rootFolderOrFile: 'automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-Selenium.zip'
+        replaceExistingArchive: true
+    - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-Selenium.zip'
+      displayName: 'Functional UI Test'
+      artifact: drop-Selenium
+
+- stage: Deploy
+  jobs:
+  - deployment: FakeRestAPI
+    pool:
+      vmImage: 'ubuntu-22.04'
+    environment: 'TEST'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureWebApp@1
+              inputs:
+                azureSubscription: 'Azure for Students(4)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
+                appType: 'webApp'
+                appName: 'automate-app-test-azure-project-AppService'
+                package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
+                deploymentMethod: 'auto'
+  
+  
+  - deployment: VMDeploy
+    displayName: Deploy
+    pool:
+      vmImage: 'ubuntu-22.04'
+    environment:
+      name:  Test
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                pip3 install selenium
+                # export PATH=$PATH:some/path
+  
+  # - deployment: deployment_vm
+  #   displayName: Deploy Virtual Machine
+  #   environment:
+  #     name: 'TEST'
+  #     resourceType: VirtualMachine
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:
+  #         - bash: |
+  #             pwd
+  #             hostname
+  #             uname -a
+  #             cat /etc/*-release
+  #             sudo apt-get install software-properties-common -y
+  #             sudo apt-add-repository universe -y
+  #             sudo apt-get update -y
+  #             sudo apt-get install python3-pip -y
+  #             sudo apt-get install unzip -y
+  #             sudo apt-get install -y chromium-browser
+  #             sudo apt-get install -y chromium-chromedriver
+  #             python3 -m pip install --upgrade pip
+  #             pip3 install selenium
+  #             python3 -V
+  #             pip3 -V
+  #             /usr/bin/chromium-browser --version
+  #             /usr/bin/chromedriver --version
+  #             python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
+  #             # Install Log Analytics agent on Linux computers (only need to run once)
+  #             # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh
+  #             # sh onboard_agent.sh -w ${AZURE_LOG_ANALYTICS_ID} -s ${AZURE_LOG_ANALYTICS_PRIMARY_KEY}
+  #             # sudo /opt/microsoft/omsagent/bin/service_control restart ${AZURE_LOG_ANALYTICS_ID}
+            # env:  # To use secret variables in a script, we must explicitly map them as environment variables.
+            #   AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
+            #   AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
+            # displayName: Configure selenium
+
+
+
