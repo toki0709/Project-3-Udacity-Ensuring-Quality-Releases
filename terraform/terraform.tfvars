@@ -14,8 +14,8 @@ resource_type    = "AppService"
 #vm 
 name           = "vm-test"
 admin_username = "azureuser"
-admin_password = "Testuser1234"
-public_key_path = "~/.ssh/tf_3.pub"
+
+
 # Network
 address_space        = ["10.5.0.0/16"]
 address_prefix_test  = "10.5.1.0/24"

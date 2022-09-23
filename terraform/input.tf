@@ -28,12 +28,7 @@ variable "name" {
 variable "admin_username" {
   default = "azureuser"
 }
-variable "admin_password" {
-  
-}
-variable "public_key_path" {
-  
-}
+
 # Network
 variable virtual_network_name {}
 variable address_prefix_test {}
