@@ -32,8 +32,8 @@ def login(user, password):
         By.CSS_SELECTOR, "input[id='password']").send_keys(password)
     driver.find_element(
         By.CSS_SELECTOR, "input[id='login-button']").click()
-    if current_url := driver.current_url:
-        assert current_url == "https://www.saucedemo.com/inventory.html"
+    home_url = "https://www.saucedemo.com/inventory.html"
+    if home_url == driver.current_url:
         print(f"{current_date_time} ---> Login succesfull!!")
     else:
         print(f"{current_date_time} ---> Login Unsuccesfull!!")
