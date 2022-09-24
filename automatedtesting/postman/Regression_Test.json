@@ -58,14 +58,6 @@
 							"pm.test(\"Successful response\", function () {",
 							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"});",
-							"",
-							"// pm.test(\"The response has all properties\", () => {",
-							"//     const jsonData = pm.response.json();",
-							"//     pm.expect(jsonData.status).to.include(\"success\");",
-							"//     pm.expect(jsonData).to.be.an(\"object\");",
-							"//     pm.expect(jsonData.data).to.be.an(\"array\");",
-							"",
-							"// })",
 							""
 						],
 						"type": "text/javascript"

@@ -27,9 +27,7 @@
 							"    pm.expect(jsonData.id).not.null\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
-							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
-							"});"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -68,9 +66,7 @@
 							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
-							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
-							"});"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -125,13 +121,6 @@
 							"pm.test(\"Check Employee Salary\", function () {\r",
 							"    pm.expect(jsonData.data.employee_salary).to.equal(217500)\r",
 							"});\r",
-							"\r",
-							"\r",
-							"pm.test(\"The response has all properties\", () => {\r",
-							"    pm.expect(jsonData.data.employee_name).to.be.a('string');\r",
-							"    pm.expect(jsonData.data.employee_age).to.be.a('number');\r",
-							"    pm.expect(jsonData.data.employee_salary).to.be.a('number');\r",
-							"});\r",
 							""
 						],
 						"type": "text/javascript"
@@ -176,9 +165,7 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"  pm.response.to.have.status(200);\r",
 							"});\r",
-							"pm.test(\"Cookie ezCMPCCS is present\", () => {\r",
-							"  pm.expect(pm.cookies.has('ezCMPCCS')).to.be.true;\r",
-							"});"
+							""
 						],
 						"type": "text/javascript"
 					}
