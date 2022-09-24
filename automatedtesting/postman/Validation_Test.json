@@ -108,7 +108,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							" var jsonData = pm.response.json();\r",
+							"var jsonData = pm.response.json();\r",
 							"\r",
 							"pm.test(\"Status code is 200\", function () {\r",
 							"  pm.response.to.have.status(200);\r",
@@ -126,10 +126,6 @@
 							"    pm.expect(jsonData.data.employee_salary).to.equal(217500)\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Person is Dai Rios\", () => {\r",
-							"  pm.expect(jsonData.data.employee_name).to.eql(\"Dai Rios\");\r",
-							"  pm.expect(jsonData.data.employee_age).to.eql(35);\r",
-							"});\r",
 							"\r",
 							"pm.test(\"The response has all properties\", () => {\r",
 							"    pm.expect(jsonData.data.employee_name).to.be.a('string');\r",
@@ -158,13 +154,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/employee/{{id}}",
+					"raw": "{{url}}/employee/20",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"employee",
-						"{{id}}"
+						"20"
 					]
 				}
 			},
