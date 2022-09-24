@@ -151,38 +151,54 @@ stages:
           sudo npm install -g newman
           sudo npm install newman-reporter-junitfull -g      
 
-    - task: Bash@3
-      displayName: 'Regression Tests'
+    # - task: Bash@3
+    #   displayName: 'Regression Tests'
+    #   inputs:
+    #     workingDirectory: 'automatedtesting/postman'
+    #     targetType: 'inline'
+    #     script: |
+    #       #! /bin/bash
+
+    #       newman run Regression_Test.json \
+    #         -e Project-3-ENV.json \
+    #         -r cli,junitfull \
+    #         --reporter-junitfull-export JUnitReportRegression.xml
+    
+    - task: CmdLine@2
+      displayName: Run Regression Tests
       inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
+          script: 'newman run postman/Regression_Test.json -e postman/ Project-3-ENV.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml --suppress-exit-code'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+      continueOnError: true
 
-          newman run Regression_Test.json \
-            -e Project-3-ENV.json \
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportRegression.xml
-
-    - task: Bash@3
-      displayName: 'Data Validation Tests'
+    - task: CmdLine@2
+      displayName: Run Data Validation Tests
       inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
+        script: 'newman run postman/Data_Validation.json -e postman/ Project-3-ENV.json .json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml --suppress-exit-code'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+      continueOnError: true
 
-          newman run Validation_Test.json \
-            -e Project-3-ENV.json \
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportValidation.xml
 
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/JUnitReport*.xml'
-        testRunTitle: 'Publish test results'
-        searchFolder: 'automatedtesting/postman'
+
+    # - task: CmdLine@2
+    #   displayName: 'Data Validation Tests'
+    #   inputs:
+    #     workingDirectory: 'automatedtesting/postman'
+    #     targetType: 'inline'
+    #     script: |
+    #       #! /bin/bash
+
+    #       newman run Validation_Test.json \
+    #         -e Project-3-ENV.json \
+    #         -r cli,junitfull \
+    #         --reporter-junitfull-export JUnitReportValidation.xml
+
+    # - task: PublishTestResults@2
+    #   inputs:
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: '**/JUnitReport*.xml'
+    #     testRunTitle: 'Publish test results'
+    #     searchFolder: 'automatedtesting/postman'
 
 
 
