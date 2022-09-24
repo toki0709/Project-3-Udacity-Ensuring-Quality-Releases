@@ -59,19 +59,14 @@
 							"    pm.expect(pm.response.text()).to.include(\"success\");",
 							"});",
 							"",
-							"pm.test(\"The response has all properties\", () => {",
-							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData.status).to.include(\"success\");",
-							"    pm.expect(jsonData).to.be.an(\"object\");",
-							"    pm.expect(jsonData.data).to.be.an(\"array\");",
+							"// pm.test(\"The response has all properties\", () => {",
+							"//     const jsonData = pm.response.json();",
+							"//     pm.expect(jsonData.status).to.include(\"success\");",
+							"//     pm.expect(jsonData).to.be.an(\"object\");",
+							"//     pm.expect(jsonData.data).to.be.an(\"array\");",
 							"",
-							"})",
-							"",
-							"// \"id\": 1,",
-							"// \"employee_name\": \"Tiger Nixon\",",
-							"// \"employee_salary\": 320800,",
-							"// \"employee_age\": 61,",
-							"// \"profile_image\": \"\""
+							"// })",
+							""
 						],
 						"type": "text/javascript"
 					}
