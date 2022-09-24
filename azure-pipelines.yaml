@@ -37,7 +37,6 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        # commandOptions: 'force-unlock -force a874a865-d586-bb2b-7452-bd397558c47c'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         environmentServiceNameAzureRM: 'Azure for Students(2)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
     - task: TerraformTaskV3@3
@@ -113,7 +112,7 @@ stages:
           #! /bin/bash
 
           newman run Regression_Test.json \
-            -e Project-3-ENV.json \
+            -e Project-3-ENV.json --delay-request 100\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
       continueOnError: true
@@ -127,7 +126,7 @@ stages:
           #! /bin/bash
 
           newman run Validation_Test.json \
-            -e Project-3-ENV.json \
+            -e Project-3-ENV.json --delay-request 100\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
       continueOnError: true
