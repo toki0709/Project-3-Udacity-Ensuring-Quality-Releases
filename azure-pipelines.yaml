@@ -66,7 +66,6 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-Selenium.zip'
         replaceExistingArchive: true
     - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-Selenium.zip'
-      displayName: 'Functional UI Test'
       artifact: drop-Selenium
 
 - stage: Deploy
@@ -88,8 +87,8 @@ stages:
                 deploymentMethod: 'auto'
   
   
-  - deployment: VMDeploy
-    displayName: Deploy
+  - deployment: Deploy
+    displayName: UI TEST
     pool:
       vmImage: 'ubuntu-22.04'
     environment:
@@ -104,50 +103,87 @@ stages:
               targetType: 'inline'
               script: |
                 #! /bin/bash
-                
+  
                 sudo apt-get upgrade -y
-                sudo apt-get install python3-pip -y
+                sudo apt-get install python3-pip
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
-                pip3 install selenium
-                export PATH=$PATH:some/path
-  
-  # - deployment: deployment_vm
-  #   displayName: Deploy Virtual Machine
-  #   environment:
-  #     name: 'TEST'
-  #     resourceType: VirtualMachine
-  #   strategy:
-  #     runOnce:
-  #       deploy:
-  #         steps:
-  #         - bash: |
-  #             pwd
-  #             hostname
-  #             uname -a
-  #             cat /etc/*-release
-  #             sudo apt-get install software-properties-common -y
-  #             sudo apt-add-repository universe -y
-  #             sudo apt-get update -y
-  #             sudo apt-get install python3-pip -y
-  #             sudo apt-get install unzip -y
-  #             sudo apt-get install -y chromium-browser
-  #             sudo apt-get install -y chromium-chromedriver
-  #             python3 -m pip install --upgrade pip
-  #             pip3 install selenium
-  #             python3 -V
-  #             pip3 -V
-  #             /usr/bin/chromium-browser --version
-  #             /usr/bin/chromedriver --version
-  #             python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
-  #             # Install Log Analytics agent on Linux computers (only need to run once)
-  #             # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh
-  #             # sh onboard_agent.sh -w ${AZURE_LOG_ANALYTICS_ID} -s ${AZURE_LOG_ANALYTICS_PRIMARY_KEY}
-  #             # sudo /opt/microsoft/omsagent/bin/service_control restart ${AZURE_LOG_ANALYTICS_ID}
-            # env:  # To use secret variables in a script, we must explicitly map them as environment variables.
-            #   AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
-            #   AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
-            # displayName: Configure selenium
+                
+                wget https://chromedriver.storage.googleapis.com/index.html?path=105.0.5195.52/chromedriver_linux64.zip
+                unzip chromedriver_linux64.zip
+                sudo mv chromedriver /usr/bin/chromedriver
+                sudo chown root:root /usr/bin/chromedriver
+                sudo chmod +x /usr/bin/chromedriver
+                
+                sudo python3 -m pip install -U selenium
+                export PATH=$PATH:/usr/bin/chromedriver
+          
+          - download: current
+            displayName: 'Download Selenium'
+            artifact: drop-Selenium
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                  unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+                  sudo mkdir /var/logs
+                  python3 login.py > uitest.log
+                  sudo mv uitest.log /var/logs
+
+- stage: Tests
+  jobs:
+
+  - job: Integration
+    displayName: 'Integration Tests'
+    pool:
+      vmImage: ubuntu-22.04
+    steps:
+
+    - task: Bash@3
+      displayName: 'Install Postman & Newman'
+      inputs:
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+          pwd
+          sudo snap install postman
+          sudo npm install -g newman
+          sudo npm install newman-reporter-junitfull -g      
+
+    - task: Bash@3
+      displayName: 'Regression Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+
+          newman run Regression_Test.json \
+            -e Project-3-ENV.json \
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportRegression.xml
+
+    - task: Bash@3
+      displayName: 'Data Validation Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+
+          newman run Validation_Test.json \
+            -e Project-3-ENV.json \
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportValidation.xml
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/JUnitReport*.xml'
+        testRunTitle: 'Publish test results'
+        searchFolder: 'automatedtesting/postman'
+
+
 
 
 
