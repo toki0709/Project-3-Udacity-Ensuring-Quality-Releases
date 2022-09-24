@@ -167,15 +167,15 @@ stages:
     - task: CmdLine@2
       displayName: Run Regression Tests
       inputs:
-          script: 'newman run postman/Regression_Test.json -e postman/ Project-3-ENV.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml --suppress-exit-code'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          script: 'newman run automatedtesting/postman/Regression_Test.json -e postman/ Project-3-ENV.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml --suppress-exit-code'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
       continueOnError: true
 
     - task: CmdLine@2
       displayName: Run Data Validation Tests
       inputs:
-        script: 'newman run postman/Data_Validation.json -e postman/ Project-3-ENV.json .json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml --suppress-exit-code'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+        script: 'newman run automatedtesting/postman/Data_Validation.json -e postman/ Project-3-ENV.json .json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml --suppress-exit-code'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
       continueOnError: true
 
 
