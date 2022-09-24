@@ -12,7 +12,7 @@ current_date_time = now.strftime("%d/%m/%Y %H:%M:%S")
 options = ChromeOptions()
 options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
-driver = webdriver.Chrome()
+# driver = webdriver.Chrome()
 
 
 def login(user, password):
