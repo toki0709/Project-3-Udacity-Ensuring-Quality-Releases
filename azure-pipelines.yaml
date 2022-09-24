@@ -1,6 +1,6 @@
 name: Azure Pipelines
 variables:
-  python.version: '3.7.6'
+  python.version: '3.9.7'
 stages:
 - stage: Build
   jobs:
@@ -37,7 +37,6 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        # commandOptions: 'force-unlock -force a874a865-d586-bb2b-7452-bd397558c47c'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         environmentServiceNameAzureRM: 'Azure for Students(2)(7cb082a6-6105-42a2-a09c-90c88cc9a56d)'
     - task: TerraformTaskV3@3
@@ -85,14 +84,83 @@ stages:
                 appName: 'automate-app-test-azure-project-AppService'
                 package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
                 deploymentMethod: 'auto' 
-- stage: Tests
+
+  - deployment: VMDeploy
+    environment:
+      name:  'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+
+                wget https://chromedriver.storage.googleapis.com/104.0.5112.29/chromedriver_linux64.zip
+                # install chrome driver
+                unzip chromedriver_linux64.zip
+                sudo mv chromedriver /usr/bin/chromedriver
+                sudo chown root:root /usr/bin/chromedriver
+                sudo chmod +x /usr/bin/chromedriver
+                chromium-browser -version
+                chromedriver --version
+                pip3 install selenium
+                export PATH=$PATH:/usr/bin/chromedriver
+
+
+- stage: UI_Tests
+  jobs:
+  - deployment: UITests
+    pool:
+      vmImage: 'ubuntu-22.04'
+    environment:
+      name:  'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download Selenium'
+              artifact: drop-Selenium
+            - task: Bash@3
+              displayName: Selenium UI Tests
+              inputs:
+                targetType: 'inline'
+                script: |
+
+                  unzip -o $(Pipeline.Workspace)/drop-Selenium/$(Build.BuildId)-Selenium.zip 
+                  sudo mkdir -p /var/log/selenium
+                  sudo chmod 664 /var/log/selenium
+                  
+                  sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+                  # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+                  cd $(System.DefaultWorkingDirectory)
+                  mkdir -p log/selenium
+                  pwd
+                  sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+                  ls -la
+            - task: PublishPipelineArtifact@1
+              displayName: Publish selenium logs
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+                artifactName: 'drop-selenium-logs'
+
+- stage: Integration_Tests
   jobs:
   - job: Integration
     displayName: 'Integration Tests'
     pool:
       vmImage: ubuntu-22.04
     steps:
-
     - task: Bash@3
       displayName: 'Install Postman & Newman'
       inputs:
@@ -113,7 +181,7 @@ stages:
           #! /bin/bash
 
           newman run Regression_Test.json \
-            -e Project-3-ENV.json \
+            -e Project-3-ENV.json --delay-request 100\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
       continueOnError: true
@@ -127,7 +195,7 @@ stages:
           #! /bin/bash
 
           newman run Validation_Test.json \
-            -e Project-3-ENV.json \
+            -e Project-3-ENV.json --delay-request 100\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
       continueOnError: true
