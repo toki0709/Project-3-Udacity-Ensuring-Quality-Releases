@@ -84,14 +84,52 @@ stages:
                 appName: 'automate-app-test-azure-project-AppService'
                 package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
                 deploymentMethod: 'auto' 
-- stage: Tests
+
+
+- stage: UI_Tests
+  jobs:
+  - deployment: UITests
+    pool:
+      vmImage: 'ubuntu-22.04'
+    environment:
+      name:  'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download Selenium'
+              artifact: drop-selenium
+            - task: Bash@3
+              displayName: Selenium UI Tests
+              inputs:
+                targetType: 'inline'
+                script: |
+                  unzip -o $(Pipeline.Workspace)/selenium/-Selenium.zip -d .
+                  sudo mkdir -p /var/log/selenium
+                  sudo chmod 664 /var/log/selenium
+                  
+                  sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+                  # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+                  cd $(System.DefaultWorkingDirectory)
+                  mkdir -p log/selenium
+                  pwd
+                  sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+                  ls -la
+            - task: PublishPipelineArtifact@1
+              displayName: Publish selenium logs
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+                artifactName: 'drop-selenium-logs'
+
+- stage: Integration_Tests
   jobs:
   - job: Integration
     displayName: 'Integration Tests'
     pool:
       vmImage: ubuntu-22.04
     steps:
-
     - task: Bash@3
       displayName: 'Install Postman & Newman'
       inputs:
