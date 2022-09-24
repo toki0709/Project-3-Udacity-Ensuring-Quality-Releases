@@ -84,8 +84,8 @@ stages:
                 appName: 'automate-app-test-azure-project-AppService'
                 package: '$(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip'
                 deploymentMethod: 'auto' 
+  
   - deployment: VMDeploy
-    displayName: myvm
     environment:
       name:  'TEST'
       resourceType: VirtualMachine
@@ -129,7 +129,7 @@ stages:
           steps:
             - download: current
               displayName: 'Download Selenium'
-              artifact: drop-selenium
+              artifact: drop-Selenium
             - task: Bash@3
               displayName: Selenium UI Tests
               inputs:
