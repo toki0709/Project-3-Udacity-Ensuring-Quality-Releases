@@ -104,7 +104,7 @@ stages:
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
 
-                wget https://https://chromedriver.storage.googleapis.com/104.0.5112.29/chromedriver_linux64.zip
+                wget https://chromedriver.storage.googleapis.com/104.0.5112.29/chromedriver_linux64.zip
                   # install chrome driver
                 unzip chromedriver_linux64.zip
                 sudo mv chromedriver /usr/bin/chromedriver
