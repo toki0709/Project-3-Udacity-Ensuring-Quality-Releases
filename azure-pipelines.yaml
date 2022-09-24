@@ -135,7 +135,8 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                  unzip -o $(Pipeline.Workspace)/selenium/drop-selenium.zip -d .
+
+                  unzip -o $(Pipeline.Workspace)/drop-selenium/$(Build.BuildId)-Selenium.zip 
                   sudo mkdir -p /var/log/selenium
                   sudo chmod 664 /var/log/selenium
                   
