@@ -163,8 +163,25 @@ stages:
             -e Project-3-ENV.json \
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
+      continueOnError: true
+      
+    # - task: CmdLine@2
+    #   displayName: Run Regression Tests
+    #   inputs:
+    #       script: 'newman run automatedtesting/postman/Regression_Test.json -e postman/ Project-3-ENV.json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/RegressionTests.xml --suppress-exit-code'
+    #   workingDirectory: '$(System.DefaultWorkingDirectory)'
+    #   continueOnError: true
 
-    - task: Bash@3
+    # - task: CmdLine@2
+    #   displayName: Run Data Validation Tests
+    #   inputs:
+    #     script: 'newman run automatedtesting/postman/Data_Validation.json -e postman/ Project-3-ENV.json .json --delay-request 5000 --bail newman -x --reporters cli,junit --reporter-junit-export Results/DataValidationTests.xml --suppress-exit-code'
+    #   workingDirectory: '$(System.DefaultWorkingDirectory)'
+    #   continueOnError: true
+
+
+
+    - task: CmdLine@2
       displayName: 'Data Validation Tests'
       inputs:
         workingDirectory: 'automatedtesting/postman'
@@ -176,13 +193,14 @@ stages:
             -e Project-3-ENV.json \
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
+      continueOnError: true
 
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/JUnitReport*.xml'
-        testRunTitle: 'Publish test results'
-        searchFolder: 'automatedtesting/postman'
+    # - task: PublishTestResults@2
+    #   inputs:
+    #     testResultsFormat: 'JUnit'
+    #     testResultsFiles: '**/JUnitReport*.xml'
+    #     testRunTitle: 'Publish test results'
+    #     searchFolder: 'automatedtesting/postman'
 
 
 
