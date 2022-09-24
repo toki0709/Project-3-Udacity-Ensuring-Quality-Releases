@@ -19,13 +19,6 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"  pm.response.to.have.status(200);\r",
 							"});\r",
-							"pm.test(\"Successful response\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
-							"});\r",
-							"pm.test(\"Check is is not null\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.id).not.null\r",
-							"});\r",
 							"\r",
 							""
 						],
@@ -112,15 +105,7 @@
 							"pm.test(\"Successful response\", function () {\r",
 							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
 							"});\r",
-							"pm.test(\"Check employee name\", function () {\r",
-							"    pm.expect(jsonData.data.employee_name).to.equal(\"Dai Rios\")\r",
-							"});\r",
-							"pm.test(\"Check Employee age\", function () {\r",
-							"    pm.expect(jsonData.data.employee_age).to.equal(35)\r",
-							"});\r",
-							"pm.test(\"Check Employee Salary\", function () {\r",
-							"    pm.expect(jsonData.data.employee_salary).to.equal(217500)\r",
-							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -175,13 +160,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/delete/{{id}}",
+					"raw": "{{url}}/delete/10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"delete",
-						"{{id}}"
+						"10"
 					]
 				}
 			},
