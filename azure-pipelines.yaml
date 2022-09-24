@@ -87,48 +87,49 @@ stages:
                 deploymentMethod: 'auto'
   
   
-  - deployment: Deploy
-    displayName: UI TEST
-    pool:
-      vmImage: 'ubuntu-22.04'
-    environment:
-      name:  Test
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                #! /bin/bash
+  # - deployment: Deploy
+  #   displayName: UI TEST
+  #   pool:
+  #     vmImage: 'ubuntu-22.04'
+  #   environment:
+  #     name:  Test
+  #     resourceType: VirtualMachine
+  #   strategy:
+  #     runOnce:
+  #       deploy:
+  #         steps:
+  #         - task: Bash@3
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #               #! /bin/bash
   
-                sudo apt-get upgrade -y
-                sudo apt-get install python3-pip
-                sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
+  #               sudo apt-get upgrade -y
+  #               sudo apt-get install python3-pip
+  #               sudo apt-get install unzip -y
+  #               sudo apt-get install -y chromium-browser
                 
-                wget https://chromedriver.storage.googleapis.com/index.html?path=105.0.5195.52/chromedriver_linux64.zip
-                unzip chromedriver_linux64.zip
-                sudo mv chromedriver /usr/bin/chromedriver
-                sudo chown root:root /usr/bin/chromedriver
-                sudo chmod +x /usr/bin/chromedriver
+  #               wget https://chromedriver.storage.googleapis.com/index.html?path=105.0.5195.52/chromedriver_linux64.zip
+  #               unzip chromedriver_linux64.zip
+  #               sudo mv chromedriver /usr/bin/chromedriver
+  #               sudo chown root:root /usr/bin/chromedriver
+  #               sudo chmod +x /usr/bin/chromedriver
                 
-                sudo python3 -m pip install -U selenium
-                export PATH=$PATH:/usr/bin/chromedriver
-          
-          - download: current
-            displayName: 'Download Selenium'
-            artifact: drop-Selenium
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                  unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
-                  sudo mkdir /var/logs
-                  python3 login.py > uitest.log
-                  sudo mv uitest.log /var/logs
+  #               sudo python3 -m pip install -U selenium
+  #               export PATH=$PATH:'pwd'
+
+
+  #         - download: current
+  #           displayName: 'Download Selenium'
+  #           artifact: drop-Selenium
+  #         - task: Bash@3
+  #           inputs:
+  #             targetType: 'inline'
+  #             script: |
+  #                 unzip -o $(Pipeline.Workspace)/selenium/selenium-tests.zip -d .
+  #                 sudo mkdir /var/logs
+  #                 python3 login.py > uitest.log
+  #                 sudo mv uitest.log /var/logs
 
 - stage: Tests
   jobs:
