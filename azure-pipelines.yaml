@@ -248,6 +248,10 @@ stages:
 
               apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
                                        -l log/jmeter/endurance-test.csv \
-                                       -e -f -o log/jmeter/endurance-test-html-report \
-                                       -j log/jmeter/endurance-test.log
-
+                                       -e -f -o log/automatedtesting/jmeter/endurance-test-html-report \
+                                       -j log/automatedtesting/jmeter/endurance-test.log
+              jmeter -n \
+              -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+              -l endurance-test-report/endurance-results.jtl \
+              -e \
+              -o endurance-test-report
