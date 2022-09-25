@@ -255,3 +255,24 @@ stages:
               -l endurance-test-report/endurance-results.jtl \
               -e \
               -o endurance-test-report
+        - task: ArchiveFiles@2
+          displayName: Archive JMeter endurance test HTML report
+          inputs:
+            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report'
+            includeRootFolder: false
+            archiveType: 'zip'
+            archiveFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report-$(Build.BuildId).zip'
+            verbose: true
+        - bash: |
+            
+            # rm -rf log/jmeter/stress-test-html-report
+            rm -rf log/automatedtesting/jmeter/endurance-test-html-report
+            cd log/jmeter
+            pwd
+            ls -la
+          displayName: Delete original JMeter test HTML reports
+        - task: PublishPipelineArtifact@1
+          displayName: Publish JMeter logs
+          inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter'
+            artifactName: 'drop-jmeter-logs'
