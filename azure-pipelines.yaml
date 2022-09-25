@@ -232,7 +232,7 @@ stages:
 
             # -l endurance-test-report/endurance-results.jtl \
 
-            -o endurance-test-report
+            # -o endurance-test-report
 
     - task: publishhtmlreport@1
       displayName: 'Endurance Test Results'
@@ -248,7 +248,7 @@ stages:
           jmeter -n \
             -t automatedtesting/jmeter/Stress_Test.jmx \
             # -l stress-test-report/stress-results.jtl \
-            -o stress-test-report
+            # -o stress-test-report
           
     - task: publishhtmlreport@1
       displayName: 'Publish Stress Test Results'
