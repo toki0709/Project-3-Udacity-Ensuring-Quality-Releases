@@ -212,7 +212,6 @@ stages:
 - stage: Performance_Tests
   jobs:
   - job: Performance
-    displayName: 'Performance Tests'
     pool:
       vmImage: 'ubuntu-22.04'
     
@@ -228,7 +227,7 @@ stages:
         targetType: 'inline'
         script: |
           jmeter -n \
-            -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+            -t automatedtesting/jmeter/Endurance_Test.jmx \
             -l endurance-test-report/endurance-results.jtl \
             -e \
             -o endurance-test-report
