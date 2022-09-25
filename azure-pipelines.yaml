@@ -207,72 +207,136 @@ stages:
         testResultsFiles: '**/JUnitReport*.xml'
         testRunTitle: 'Publish test results'
         searchFolder: 'automatedtesting/postman'
-
-- stage: Performance_Test
+  
+  
+- stage: Performance_Tests
   jobs:
-    - job: 
-      displayName: Performance Test
-      pool:
-        vmImage: ubuntu-22.04
-      steps:
-        - task: Bash@3
-          displayName: Installing JMeter
-          inputs: 
-            targetType: inline
-            script: |
-              #! /bin/bash
+  - job: Performance
+    displayName: 'Performance Tests'
+    pool:
+      vmImage: 'ubuntu-22.04'
+    
+    steps:
+    - task: JMeterInstaller@0
+      displayName: 'Install JMeter 5.5'
+      inputs:
+        jmeterVersion: '5.5'
+    
+    - task: Bash@3
+      displayName: 'Endurance Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+            -l endurance-test-report/endurance-results.jtl \
+            -e \
+            -o endurance-test-report
 
-              sudo apt-get install openjdk-11-jre-headless -y
+    - task: publishhtmlreport@1
+      displayName: 'Publish Endurance Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'    
 
-              java -version
-              wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
+    - task: Bash@3
+      displayName: 'Stress Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automatedtesting/jmeter/StressTestSuite.jmx \
+            -l stress-test-report/stress-results.jtl \
+            -e \
+            -o stress-test-report
 
-              tar xzvf jmeter.tgz
-
-              apache-jmeter-5.5/bin/jmeter --version
-
-              # create log directory
-
-              mkdir -p log/jmeter
-
-              pwd
-
-              ls -la
+    - task: publishhtmlreport@1
+      displayName: 'Publish Stress Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
         
-        - task: Bash@3
-          displayName: Endurance Test
-          inputs: 
-            targetType: inline
-            script: |
-              #! /bin/bash
+        
+    - task: Bash@3
+      displayName: 'Print Performance Test Logs'
+      inputs:
+        targetType: 'inline'
+        script: |
+          ls -lah endurance-test-report/
+          ls -lah stress-test-report/
+          cat jmeter.log        
 
-              apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
-                                       -l log/jmeter/endurance-test.csv \
-                                       -e -f -o log/automatedtesting/jmeter/endurance-test-html-report \
-                                       -j log/automatedtesting/jmeter/endurance-test.log
-              jmeter -n \
-              -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
-              -l endurance-test-report/endurance-results.jtl \
-              -e \
-              -o endurance-test-report
-        - task: ArchiveFiles@2
-          displayName: Archive JMeter endurance test HTML report
-          inputs:
-            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report'
-            includeRootFolder: false
-            archiveType: 'zip'
-            archiveFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report-$(Build.BuildId).zip'
-            verbose: true
-        - bash: |
+
+
+
+
+
+
+# - stage: Performance_Test
+#   jobs:
+#     - job: 
+#       displayName: Performance Test
+#       pool:
+#         vmImage: ubuntu-22.04
+#       steps:
+#         - task: Bash@3
+#           displayName: Installing JMeter
+#           inputs: 
+#             targetType: inline
+#             script: |
+#               #! /bin/bash
+
+#               sudo apt-get install openjdk-11-jre-headless -y
+
+#               java -version
+#               wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
+
+#               tar xzvf jmeter.tgz
+
+#               apache-jmeter-5.5/bin/jmeter --version
+
+#               # create log directory
+
+#               mkdir -p log/jmeter
+
+#               pwd
+
+#               ls -la
+        
+#         - task: Bash@3
+#           displayName: Endurance Test
+#           inputs: 
+#             targetType: inline
+#             script: |
+#               #! /bin/bash
+
+#               apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
+#                                        -l log/jmeter/endurance-test.csv \
+#                                        -e -f -o log/automatedtesting/jmeter/endurance-test-html-report \
+#                                        -j log/automatedtesting/jmeter/endurance-test.log
+#               jmeter -n \
+#               -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+#               -l endurance-test-report/endurance-results.jtl \
+#               -e \
+#               -o endurance-test-report
+#         - task: ArchiveFiles@2
+#           displayName: Archive JMeter endurance test HTML report
+#           inputs:
+#             rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report'
+#             includeRootFolder: false
+#             archiveType: 'zip'
+#             archiveFile: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter/endurance-test-html-report-$(Build.BuildId).zip'
+#             verbose: true
+#         - bash: |
             
-            # rm -rf log/jmeter/stress-test-html-report
-            rm -rf log/automatedtesting/jmeter/endurance-test-html-report
-            cd log/jmeter
-            pwd
-            ls -la
-          displayName: Delete original JMeter test HTML reports
-        - task: PublishPipelineArtifact@1
-          displayName: Publish JMeter logs
-          inputs:
-            targetPath: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter'
-            artifactName: 'drop-jmeter-logs'
+#             # rm -rf log/jmeter/stress-test-html-report
+#             rm -rf log/automatedtesting/jmeter/endurance-test-html-report
+#             cd log/jmeter
+#             pwd
+#             ls -la
+#           displayName: Delete original JMeter test HTML reports
+#         - task: PublishPipelineArtifact@1
+#           displayName: Publish JMeter logs
+#           inputs:
+#             targetPath: '$(System.DefaultWorkingDirectory)/log/automatedtesting/jmeter'
+#             artifactName: 'drop-jmeter-logs'
