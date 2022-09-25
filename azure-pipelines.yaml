@@ -115,206 +115,102 @@ stages:
                 export PATH=$PATH:/usr/bin/chromedriver
 
 
-# - stage: UI_Tests
-#   jobs:
-#   - deployment: UITests
-#     pool:
-#       vmImage: 'ubuntu-22.04'
-#     environment:
-#       name:  'TEST'
-#       resourceType: VirtualMachine
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#             - download: current
-#               displayName: 'Download Selenium'
-#               artifact: drop-Selenium
-#             - task: Bash@3
-#               displayName: Selenium UI Tests
-#               inputs:
-#                 targetType: 'inline'
-#                 script: |
+- stage: UI_Tests
+  jobs:
+  - deployment: UITests
+    pool:
+      vmImage: 'ubuntu-22.04'
+    environment:
+      name:  'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download Selenium'
+              artifact: drop-Selenium
+            - task: Bash@3
+              displayName: Selenium UI Tests
+              inputs:
+                targetType: 'inline'
+                script: |
 
-#                   unzip -o $(Pipeline.Workspace)/drop-Selenium/$(Build.BuildId)-Selenium.zip 
-#                   sudo mkdir -p /var/log/selenium
-#                   sudo chmod 664 /var/log/selenium
+                  unzip -o $(Pipeline.Workspace)/drop-Selenium/$(Build.BuildId)-Selenium.zip 
+                  sudo mkdir -p /var/log/selenium
+                  sudo chmod 664 /var/log/selenium
                   
-#                   sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
-#                   # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
-#                   cd $(System.DefaultWorkingDirectory)
-#                   mkdir -p log/selenium
-#                   pwd
-#                   sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
-#                   ls -la
-#             - task: PublishPipelineArtifact@1
-#               displayName: Publish selenium logs
-#               inputs:
-#                 targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
-#                 artifactName: 'drop-selenium-logs'
+                  sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+                  # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+                  cd $(System.DefaultWorkingDirectory)
+                  mkdir -p log/selenium
+                  pwd
+                  sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+                  ls -la
+            - task: PublishPipelineArtifact@1
+              displayName: Publish selenium logs
+              inputs:
+                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+                artifactName: 'drop-selenium-logs'
 
-# - stage: Integration_Tests
-#   jobs:
-#   - job: Integration
-#     displayName: 'Integration Tests'
-#     pool:
-#       vmImage: ubuntu-22.04
-#     steps:
-#     - task: Bash@3
-#       displayName: 'Install Postman & Newman'
-#       inputs:
-#         targetType: 'inline'
-#         script: |
-#           #! /bin/bash
-#           pwd
-#           sudo snap install postman
-#           sudo npm install -g newman
-#           sudo npm install newman-reporter-junitfull -g      
+- stage: Integration_Tests
+  jobs:
+  - job: Integration
+    displayName: 'Integration Tests'
+    pool:
+      vmImage: ubuntu-22.04
+    steps:
+    - task: Bash@3
+      displayName: 'Install Postman & Newman'
+      inputs:
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+          pwd
+          sudo snap install postman
+          sudo npm install -g newman
+          sudo npm install newman-reporter-junitfull -g      
 
-#     - task: Bash@3
-#       displayName: 'Regression Tests'
-#       inputs:
-#         workingDirectory: 'automatedtesting/postman'
-#         targetType: 'inline'
-#         script: |
-#           #! /bin/bash
+    - task: Bash@3
+      displayName: 'Regression Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
           
-#           echo 'Regression Test'
-#           newman run Regression_Test.json \
-#             -e Project-3-ENV.json --delay-request 10000\
-#             -r cli,junitfull \
-#             --reporter-junitfull-export JUnitReportRegression.xml
-#       continueOnError: true
+          echo 'Regression Test'
+          newman run Regression_Test.json \
+            -e Project-3-ENV.json --delay-request 10000\
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportRegression.xml
+      continueOnError: true
 
-#     - task: Bash@3
-#       displayName: 'Data Validation Tests'
-#       inputs:
-#         workingDirectory: 'automatedtesting/postman'
-#         targetType: 'inline'
-#         script: |
-#           #! /bin/bash
+    - task: Bash@3
+      displayName: 'Data Validation Tests'
+      inputs:
+        workingDirectory: 'automatedtesting/postman'
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
 
-#           echo 'Validation Test'
-#           newman run Validation_Test.json \
-#             -e Project-3-ENV.json --delay-request 10000\
-#             -r cli,junitfull \
-#             --reporter-junitfull-export JUnitReportValidation.xml
-#       continueOnError: true
+          echo 'Validation Test'
+          newman run Validation_Test.json \
+            -e Project-3-ENV.json --delay-request 10000\
+            -r cli,junitfull \
+            --reporter-junitfull-export JUnitReportValidation.xml
+      continueOnError: true
 
-#     - task: PublishTestResults@2
-#       inputs:
-#         testResultsFormat: 'JUnit'
-#         testResultsFiles: '**/JUnitReport*.xml'
-#         testRunTitle: 'Publish test results'
-#         searchFolder: 'automatedtesting/postman'
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/JUnitReport*.xml'
+        testRunTitle: 'Publish test results'
+        searchFolder: 'automatedtesting/postman'
   
   
 - stage: Performance_Tests
   jobs:
-#   - job: Performance
-#     pool:
-#       vmImage: 'ubuntu-22.04'
-    
-#     steps:
-
-#     - task: JMeterInstaller@0
-#       displayName: 'Install JMeter 5.5'
-#       inputs:
-#         jmeterVersion: '5.5'
-    
-#     - task: Bash@3
-#       displayName: 'Endurance Test Suite'
-#       inputs:
-#         targetType: 'inline'
-#         script: |
-#           jmeter -n \
-#             -t automatedtesting/jmeter/Endurance_Test.jmx \
-
-#             # -l endurance-test-report/endurance-results.jtl \
-
-#             -o endurance-test-report
-
-#     - task: publishhtmlreport@1
-#       displayName: 'Endurance Test Results'
-#       inputs:
-#         htmlType: 'Jmeter'
-#         JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'    
-
-#     - task: Bash@3
-#       displayName: 'Stress Test Suite'
-#       inputs:
-#         targetType: 'inline'
-#         script: |
-#           jmeter -n \
-#             -t automatedtesting/jmeter/Stress_Test.jmx \
-#             # -l stress-test-report/stress-results.jtl \
-#             # -o stress-test-report
-          
-#     - task: publishhtmlreport@1
-#       displayName: 'Publish Stress Test Results'
-#       inputs:
-#         htmlType: 'Jmeter'
-#         JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
-        
-  # - job: test_jmeter
-  #   displayName: Test JMeter
-  #   pool:
-  #     vmImage: 'ubuntu-22.04'
-  #   steps:
-  #   - bash: |
-  #       sudo apt-get install openjdk-11-jre-headless -y
-  #       java -version
-  #       wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
-  #       tar xzvf jmeter.tgz
-  #       apache-jmeter-5.5/bin/jmeter --version
-  #       # create log directory
-  #       mkdir -p log/jmeter
-  #       pwd
-  #       ls -la
-  #     displayName: Install JMeter
-  #   - bash: |
-  #       apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/stress_test.jmx \
-  #                                    -l log/jmeter/test.csv \
-  #                                    -e -f -o log/jmeter/stress-test-html-report \
-  #                                    -j log/jmeter/jmeter-stress-test.log
-  #     displayName: JMeter stress test
-  #   - bash: |
-  #       apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
-  #                                    -l log/jmeter/test.csv \
-  #                                    -e -f -o log/jmeter/endurance-test-html-report \
-  #                                    -j log/jmeter/jmeter-endurance-test.log
-  #     displayName: JMeter endurance test
-  #   - task: ArchiveFiles@2
-  #     displayName: Archive JMeter stress test HTML report
-  #     inputs:
-  #       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
-  #       includeRootFolder: false
-  #       archiveType: 'zip'
-  #       archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report-$(Build.BuildId).zip'
-  #       verbose: true
-  #   - task: ArchiveFiles@2
-  #     displayName: Archive JMeter endurance test HTML report
-  #     inputs:
-  #       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
-  #       includeRootFolder: false
-  #       archiveType: 'zip'
-  #       archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report-$(Build.BuildId).zip'
-  #       verbose: true
-  #   - bash: |
-  #       rm -rf log/jmeter/stress-test-html-report
-  #       rm -rf log/jmeter/endurance-test-html-report
-  #       cd log/jmeter
-  #       pwd
-  #       ls -la
-  #     displayName: Delete original JMeter test HTML reports
-  #   - task: PublishPipelineArtifact@1
-  #     displayName: Publish JMeter logs
-  #     inputs:
-  #       targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
-  #       artifactName: 'drop-jmeter-logs'
-
-
-
     - job: PerformanceTest
       displayName: Test JMeter
       pool:
@@ -326,33 +222,20 @@ stages:
               wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
               tar xzvf jmeter.tgz
               mkdir -p log/jmeter
-              # if [ ! -d /var/log/jmeter ]; then
-              #         sudo mkdir /var/log/jmeter
-              #         sudo chmod 777 /var/log/jmeter
-              # fi
-              # if [ ! -d /var/log/jmeter/stress-test-html-report ]; then
-              #         sudo mkdir /var/log/jmeter/stress-test-html-report
-              #         sudo chmod 777 /var/log//stress-test-html-report
-              # fi  
-              # if [ ! -d /var/log/jmeter/endurance-test-html-report ]; then
-              #         sudo mkdir /var/log/jmeter/endurance-test-html-report
-              #         sudo chmod 777 /var/log/jmeter/endurance-test-html-report
-              # fi  
-            displayName: Install JMeter
+
           - bash: |
               apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/stress_test.jmx \
                                           -l log/jmeter/stress-test-result.csv \
                                           -e -f -o log/jmeter \
                                           -j log/jmeter/jmeter-stress-test.log
-            displayName: JMeter Stress Test
+
           - bash: |
               apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
                                           -l log/jmeter/endurance-test-result.csv \
                                           -e -f -o log/jmeter \
                                           -j log/jmeter/jmeter-endurance-test.log
-            displayName: JMeter Endurance Test
+
           - task: ArchiveFiles@2
-            displayName: Saving JMeter stress test report to artifact
             inputs:
               rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter'
               includeRootFolder: false
@@ -360,7 +243,6 @@ stages:
               archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter-$(Build.BuildId).zip'
               verbose: true
           - task: ArchiveFiles@2
-            displayName: Saving JMeter endurance test report to artifact
             inputs:
               rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter'
               includeRootFolder: false
