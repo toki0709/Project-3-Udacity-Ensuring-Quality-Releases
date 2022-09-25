@@ -115,98 +115,98 @@ stages:
                 export PATH=$PATH:/usr/bin/chromedriver
 
 
-- stage: UI_Tests
-  jobs:
-  - deployment: UITests
-    pool:
-      vmImage: 'ubuntu-22.04'
-    environment:
-      name:  'TEST'
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - download: current
-              displayName: 'Download Selenium'
-              artifact: drop-Selenium
-            - task: Bash@3
-              displayName: Selenium UI Tests
-              inputs:
-                targetType: 'inline'
-                script: |
+# - stage: UI_Tests
+#   jobs:
+#   - deployment: UITests
+#     pool:
+#       vmImage: 'ubuntu-22.04'
+#     environment:
+#       name:  'TEST'
+#       resourceType: VirtualMachine
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#             - download: current
+#               displayName: 'Download Selenium'
+#               artifact: drop-Selenium
+#             - task: Bash@3
+#               displayName: Selenium UI Tests
+#               inputs:
+#                 targetType: 'inline'
+#                 script: |
 
-                  unzip -o $(Pipeline.Workspace)/drop-Selenium/$(Build.BuildId)-Selenium.zip 
-                  sudo mkdir -p /var/log/selenium
-                  sudo chmod 664 /var/log/selenium
+#                   unzip -o $(Pipeline.Workspace)/drop-Selenium/$(Build.BuildId)-Selenium.zip 
+#                   sudo mkdir -p /var/log/selenium
+#                   sudo chmod 664 /var/log/selenium
                   
-                  sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
-                  # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
-                  cd $(System.DefaultWorkingDirectory)
-                  mkdir -p log/selenium
-                  pwd
-                  sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
-                  ls -la
-            - task: PublishPipelineArtifact@1
-              displayName: Publish selenium logs
-              inputs:
-                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
-                artifactName: 'drop-selenium-logs'
+#                   sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+#                   # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+#                   cd $(System.DefaultWorkingDirectory)
+#                   mkdir -p log/selenium
+#                   pwd
+#                   sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+#                   ls -la
+#             - task: PublishPipelineArtifact@1
+#               displayName: Publish selenium logs
+#               inputs:
+#                 targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+#                 artifactName: 'drop-selenium-logs'
 
-- stage: Integration_Tests
-  jobs:
-  - job: Integration
-    displayName: 'Integration Tests'
-    pool:
-      vmImage: ubuntu-22.04
-    steps:
-    - task: Bash@3
-      displayName: 'Install Postman & Newman'
-      inputs:
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-          pwd
-          sudo snap install postman
-          sudo npm install -g newman
-          sudo npm install newman-reporter-junitfull -g      
+# - stage: Integration_Tests
+#   jobs:
+#   - job: Integration
+#     displayName: 'Integration Tests'
+#     pool:
+#       vmImage: ubuntu-22.04
+#     steps:
+#     - task: Bash@3
+#       displayName: 'Install Postman & Newman'
+#       inputs:
+#         targetType: 'inline'
+#         script: |
+#           #! /bin/bash
+#           pwd
+#           sudo snap install postman
+#           sudo npm install -g newman
+#           sudo npm install newman-reporter-junitfull -g      
 
-    - task: Bash@3
-      displayName: 'Regression Tests'
-      inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
+#     - task: Bash@3
+#       displayName: 'Regression Tests'
+#       inputs:
+#         workingDirectory: 'automatedtesting/postman'
+#         targetType: 'inline'
+#         script: |
+#           #! /bin/bash
           
-          echo 'Regression Test'
-          newman run Regression_Test.json \
-            -e Project-3-ENV.json --delay-request 10000\
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportRegression.xml
-      continueOnError: true
+#           echo 'Regression Test'
+#           newman run Regression_Test.json \
+#             -e Project-3-ENV.json --delay-request 10000\
+#             -r cli,junitfull \
+#             --reporter-junitfull-export JUnitReportRegression.xml
+#       continueOnError: true
 
-    - task: Bash@3
-      displayName: 'Data Validation Tests'
-      inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
+#     - task: Bash@3
+#       displayName: 'Data Validation Tests'
+#       inputs:
+#         workingDirectory: 'automatedtesting/postman'
+#         targetType: 'inline'
+#         script: |
+#           #! /bin/bash
 
-          echo 'Validation Test'
-          newman run Validation_Test.json \
-            -e Project-3-ENV.json --delay-request 10000\
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportValidation.xml
-      continueOnError: true
+#           echo 'Validation Test'
+#           newman run Validation_Test.json \
+#             -e Project-3-ENV.json --delay-request 10000\
+#             -r cli,junitfull \
+#             --reporter-junitfull-export JUnitReportValidation.xml
+#       continueOnError: true
 
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/JUnitReport*.xml'
-        testRunTitle: 'Publish test results'
-        searchFolder: 'automatedtesting/postman'
+#     - task: PublishTestResults@2
+#       inputs:
+#         testResultsFormat: 'JUnit'
+#         testResultsFiles: '**/JUnitReport*.xml'
+#         testRunTitle: 'Publish test results'
+#         searchFolder: 'automatedtesting/postman'
   
   
 - stage: Performance_Tests
@@ -231,8 +231,7 @@ stages:
             -t automatedtesting/jmeter/Endurance_Test.jmx \
 
             # -l endurance-test-report/endurance-results.jtl \
-            
-            -e \
+
             -o endurance-test-report
 
     - task: publishhtmlreport@1
@@ -249,7 +248,6 @@ stages:
           jmeter -n \
             -t automatedtesting/jmeter/Stress_Test.jmx \
             # -l stress-test-report/stress-results.jtl \
-            -e \
             -o stress-test-report
           
     - task: publishhtmlreport@1
