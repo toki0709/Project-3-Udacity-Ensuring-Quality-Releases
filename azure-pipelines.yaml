@@ -246,7 +246,7 @@ stages:
             script: |
               #! /bin/bash
 
-              apache-jmeter-5.5/bin/jmeter -n -t jmeter/Endurance_Test.jmx \
+              apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
                                        -l log/jmeter/endurance-test.csv \
                                        -e -f -o log/jmeter/endurance-test-html-report \
                                        -j log/jmeter/endurance-test.log
