@@ -208,3 +208,46 @@ stages:
         testRunTitle: 'Publish test results'
         searchFolder: 'automatedtesting/postman'
 
+- stage: Performance_Test
+  jobs:
+    - job: 
+      displayName: Performance Test
+      pool:
+        vmImage: ubuntu-22.04
+      steps:
+        - task: Bash@3
+          displayName: Installing JMeter
+          inputs: 
+            targetType: inline
+            script: |
+              #! /bin/bash
+
+              sudo apt-get install openjdk-11-jre-headless -y
+
+              java -version
+              wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
+
+              tar xzvf jmeter.tgz
+
+              apache-jmeter-5.5/bin/jmeter --version
+
+              # create log directory
+
+              mkdir -p log/jmeter
+
+              pwd
+
+              ls -la
+        
+        - task: Bash@3
+          displayName: Endurance Test
+          inputs: 
+            targetType: inline
+            script: |
+              #! /bin/bash
+
+              apache-jmeter-5.5/bin/jmeter -n -t jmeter/Endurance_Test.jmx \
+                                       -l log/jmeter/endurance-test.csv \
+                                       -e -f -o log/jmeter/endurance-test-html-report \
+                                       -j log/jmeter/endurance-test.log
+
