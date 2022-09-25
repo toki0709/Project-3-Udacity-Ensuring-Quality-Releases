@@ -11,6 +11,7 @@ current_date_time = now.strftime("%d/%m/%Y %H:%M:%S")
 # Start the browser and login with standard_user
 options = ChromeOptions()
 options.add_argument("--headless")
+options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(options=options)
 # driver = webdriver.Chrome()
 
