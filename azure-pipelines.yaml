@@ -11,8 +11,7 @@ stages:
     # Needed for Terraform VM deployment
     - task: InstallSSHKey@0
       inputs:
-        knownHostsEntry: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
-        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDdBpKgatWFZ48d4cnUhMt8qD45pljqmS1qlPikC2A+u+hlQf+pOtUUdrrtmbKWVXzUFLFYqKM9msiIKtuoZnbQj6wyi8cD9CwyNKuUGuD6kvwQrMmfwIuIrtx1wrRQe6MmEDUGmQio0xSrjOSNmAQhxfIqhqhHyFXE6dL46zjVgJHV5xjFAeMwaS2jbTRk08vBWuwx50kcjF00qDg8w2+UkBcI0nLBJ58nmBSuIUO5VZDwDPqZ5W9De6maRDeBd4j9oNH3mByjzx1E4xeluF5S9I2TniY2aogUTv5SCbVioyLYky9G+DKbwu+6L3n3yX4LC/QYWn51FNttD+wmwJ+mvslUKJyZjS4lvT+ktiaIF4elEwInwjk5L9EkThf8ZaYbSuPuwD31sFvxl6vjrp3AluCgtqs4BCmBPDfUhtE7qX6PmCNzuEBpER3fl7ObxW6VLuYZb6M7MLD32K/qs5lEhRaS2k1r/BltzgxS/RJwJa3unLeI7bbuerlSNPvGYgM= tokitazwar71@gmail.com'
+        knownHostsEntry: 'known_host'
         sshKeySecureFile: 'tf_3'
 
     - task: TerraformTaskV3@3
@@ -179,9 +178,10 @@ stages:
         targetType: 'inline'
         script: |
           #! /bin/bash
-
+          
+          echo 'Regression Test'
           newman run Regression_Test.json \
-            -e Project-3-ENV.json --delay-request 100\
+            -e Project-3-ENV.json --delay-request 10000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
       continueOnError: true
@@ -194,8 +194,9 @@ stages:
         script: |
           #! /bin/bash
 
+          echo 'Validation Test'
           newman run Validation_Test.json \
-            -e Project-3-ENV.json --delay-request 100\
+            -e Project-3-ENV.json --delay-request 10000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
       continueOnError: true
@@ -206,8 +207,4 @@ stages:
         testResultsFiles: '**/JUnitReport*.xml'
         testRunTitle: 'Publish test results'
         searchFolder: 'automatedtesting/postman'
-
-
-
-
 
