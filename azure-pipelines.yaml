@@ -211,11 +211,12 @@ stages:
   
 - stage: Performance_Tests
   jobs:
-  - job: Performance
-    pool:
-      vmImage: 'ubuntu-22.04'
+  # - job: Performance
+  #   pool:
+  #     vmImage: 'ubuntu-22.04'
     
-    steps:
+    # steps:
+
     # - task: JMeterInstaller@0
     #   displayName: 'Install JMeter 5.5'
     #   inputs:
@@ -273,13 +274,13 @@ stages:
       displayName: Install JMeter
     - bash: |
         apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/stress_test.jmx \
-                                     -l log/jmeter/stress-test-result.csv \
+                                     -l log/jmeter/test.csv \
                                      -e -f -o log/jmeter/stress-test-html-report \
                                      -j log/jmeter/jmeter-stress-test.log
       displayName: JMeter stress test
     - bash: |
         apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Endurance_Test.jmx \
-                                     -l log/jmeter/endurance-test-result.csv \
+                                     -l log/jmeter/test.csv \
                                      -e -f -o log/jmeter/endurance-test-html-report \
                                      -j log/jmeter/jmeter-endurance-test.log
       displayName: JMeter endurance test
