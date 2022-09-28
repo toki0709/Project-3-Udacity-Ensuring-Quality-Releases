@@ -141,7 +141,6 @@ stages:
                   sudo chmod 664 /var/log/selenium
                   
                   sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
-                  # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
                   cd $(System.DefaultWorkingDirectory)
                   mkdir -p log/selenium
                   pwd
@@ -181,7 +180,7 @@ stages:
           
           echo 'Regression Test'
           newman run Regression_Test.json \
-            -e Project-3-ENV.json --delay-request 10000\
+            -e Project-3-ENV.json --delay-request 15000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
       continueOnError: true
@@ -196,7 +195,7 @@ stages:
 
           echo 'Validation Test'
           newman run Validation_Test.json \
-            -e Project-3-ENV.json --delay-request 10000\
+            -e Project-3-ENV.json --delay-request 15000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
       continueOnError: true
