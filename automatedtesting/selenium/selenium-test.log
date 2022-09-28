@@ -1,0 +1,61 @@
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+python3: can't open file 'login.py': [Errno 2] No such file or directory
+  File "login.py", line 35
+    if current_url := driver.current_url:
+                    ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File "login.py", line 14, in <module>
+    driver = webdriver.Chrome(options=options)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/chrome/webdriver.py", line 81, in __init__
+    desired_capabilities=desired_capabilities)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 157, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 252, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 321, in execute
+    self.error_handler.check_response(response)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: Chrome failed to start: exited abnormally.
+  (unknown error: DevToolsActivePort file doesn't exist)
+  (The process started from chrome location /usr/bin/chromium-browser is no longer running, so ChromeDriver is assuming that Chrome has crashed.)
+
+Traceback (most recent call last):
+  File "login.py", line 14, in <module>
+    driver = webdriver.Chrome(options=options)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/chrome/webdriver.py", line 81, in __init__
+    desired_capabilities=desired_capabilities)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 157, in __init__
+    self.start_session(capabilities, browser_profile)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 252, in start_session
+    response = self.execute(Command.NEW_SESSION, parameters)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/webdriver.py", line 321, in execute
+    self.error_handler.check_response(response)
+  File "/home/azureuser/.local/lib/python3.6/site-packages/selenium/webdriver/remote/errorhandler.py", line 242, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: unknown error: Chrome failed to start: exited abnormally.
+  (unknown error: DevToolsActivePort file doesn't exist)
+  (The process started from chrome location /usr/bin/chromium-browser is no longer running, so ChromeDriver is assuming that Chrome has crashed.)
+
+Starting the browser...
+Current Timestamp  25/09/2022 10:44:42
+Browser started successfully. Navigating to the demo page to login.
+25/09/2022 10:44:42 ---> Login succesfull!!
+Adding 6 in the cart
+25/09/2022 10:44:42 ----> Sauce Labs Bike Light ----> Added to cart
+25/09/2022 10:44:42 ----> Sauce Labs Bolt T-Shirt ----> Added to cart
+25/09/2022 10:44:42 ----> Sauce Labs Onesie ----> Added to cart
+25/09/2022 10:44:42 ----> Test.allTheThings() T-Shirt (Red) ----> Added to cart
+25/09/2022 10:44:42 ----> Sauce Labs Backpack ----> Added to cart
+25/09/2022 10:44:42 ----> Sauce Labs Fleece Jacket ----> Added to cart
+25/09/2022 10:44:42 ----> Sauce Labs Bike Light ----> Removed from cart
+25/09/2022 10:44:42 ----> Sauce Labs Bolt T-Shirt ----> Removed from cart
+25/09/2022 10:44:42 ----> Sauce Labs Onesie ----> Removed from cart
+25/09/2022 10:44:42 ----> Test.allTheThings() T-Shirt (Red) ----> Removed from cart
+25/09/2022 10:44:42 ----> Sauce Labs Backpack ----> Removed from cart
+25/09/2022 10:44:42 ----> Sauce Labs Fleece Jacket ----> Removed from cart
