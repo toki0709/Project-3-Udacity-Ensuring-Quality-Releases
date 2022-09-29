@@ -70,7 +70,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"ID\": 10,\r\n    \"IDBook\": 10,\r\n    \"FirstName\": \"abcd\",\r\n    \"LastName\": \"abcd\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -78,13 +78,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/Authors/{{id}}",
+					"raw": "{{url}}/Authors/10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"Authors",
-						"{{id}}"
+						"10"
 					]
 				}
 			},
