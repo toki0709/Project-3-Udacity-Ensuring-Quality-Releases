@@ -1,4 +1,4 @@
-# Bosch AI Talent Accelaraotr Nano Degree
+# Bosch AI Talent Accelaraotor Nano Degree
 ## Project-3: Ensuring Quality Release
 
 ### Tools Used
@@ -61,9 +61,6 @@
 	ssh username@publicIP 
 	```
 	paste the registration script 
-	```bash
-	mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/2.210.1/vsts-agent-linux-x64-2.210.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x "$(command -v systemctl)" ]; then ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/BoschDevOpsLearning/ --work _work --projectname 'Project-3' --auth PAT --token db632d4mwodtc73763oxsh76djty7oan7l7u6kklf4l33qyd6uca --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/BoschDevOpsLearning/ --work _work --projectname 'Project-3' --auth PAT --token db632d4mwodtc73763oxsh76djty7oan7l7u6kklf4l33qyd6uca; ./run.sh; fi
-	```
 - From Pipeline you can upload ssh public key, known host key.
 	![image](https://user-images.githubusercontent.com/61994831/192975382-a7983e45-e9e6-4471-acf8-b91db86cc0cb.png)
 

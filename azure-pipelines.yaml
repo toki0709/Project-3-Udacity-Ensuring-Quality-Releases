@@ -180,7 +180,7 @@ stages:
           
           echo 'Regression Test'
           newman run Regression_Test.json \
-            -e Project-3-ENV.json --delay-request 15000\
+            -e Project-3-ENV.json --delay-request 1000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportRegression.xml
       continueOnError: true
@@ -195,7 +195,7 @@ stages:
 
           echo 'Validation Test'
           newman run Validation_Test.json \
-            -e Project-3-ENV.json --delay-request 15000\
+            -e Project-3-ENV.json --delay-request 1000\
             -r cli,junitfull \
             --reporter-junitfull-export JUnitReportValidation.xml
       continueOnError: true
@@ -211,9 +211,8 @@ stages:
 - stage: Performance_Tests
   jobs:
     - job: PerformanceTest
-      displayName: Test JMeter
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'ubuntu-22.04'
       steps:
           - bash: |
               sudo apt-get install openjdk-11-jre-headless -y
