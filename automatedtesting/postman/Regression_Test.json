@@ -7,17 +7,15 @@
 	},
 	"item": [
 		{
-			"name": "Create Employee",
+			"name": "Create Author",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Successful response\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.response.to.have.status(200);",
 							"});",
-							"var json = pm.response.json();",
-							"pm.environment.set(\"id\", json.data.id);",
 							""
 						],
 						"type": "text/javascript"
@@ -29,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{name}}\",\n    \"salary\": \"{{salary}}\",\n    \"age\": \"{{age}}\"\n}",
+					"raw": "{\n  \"ID\": 10,\n  \"IDBook\": 10,\n  \"FirstName\": \"tm\",\n  \"LastName\": \"tm\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -37,26 +35,26 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/create",
+					"raw": "{{url}}/Authors",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"create"
+						"Authors"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get All Employees",
+			"name": "Get All Authors",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Successful response\", function () {",
-							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.response.to.have.status(200);",
 							"});",
 							""
 						],
@@ -68,12 +66,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/employees",
+					"raw": "{{url}}/Authors",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"employees"
+						"Authors"
 					]
 				}
 			},
@@ -96,7 +94,7 @@
 					"script": {
 						"exec": [
 							"pm.test(\"Successful response\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							""
 						],
@@ -109,30 +107,35 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "\t{\r\n\t\t\"name\":\"employee updated\",\r\n\t\t\"salary\":\"1123\",\r\n\t\t\"age\":\"23\"\r\n\t}"
+					"raw": "{\r\n    \"ID\": 10,\r\n    \"IDBook\": 10,\r\n    \"FirstName\": \"abcd\",\r\n    \"LastName\": \"abcd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
-					"raw": "{{url}}/update/{{id}}",
+					"raw": "{{url}}/Authors/10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"update",
-						"{{id}}"
+						"Authors",
+						"10"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete employee",
+			"name": "Delete Author",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Successful response\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							""
 						],
@@ -144,13 +147,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/delete/2",
+					"raw": "{{url}}/Authors/10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"delete",
-						"2"
+						"Authors",
+						"10"
 					]
 				}
 			},

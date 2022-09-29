@@ -1,25 +1,24 @@
 {
 	"info": {
-		"_postman_id": "9f9c1089-8745-4c6a-ba27-1c4647cddb96",
+		"_postman_id": "d44a62a2-0103-46dd-8111-c89c1134d02e",
 		"name": "Validation Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "23046246"
 	},
 	"item": [
 		{
-			"name": "Create Employee",
+			"name": "Create Author",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"var jsonData = pm.response.json();\r",
-							"pm.environment.set(\"id\", jsonData.data.id);\r",
 							"\r",
-							"pm.test(\"Status code is 200\", function () {\r",
-							"  pm.response.to.have.status(200);\r",
+							"pm.test(\"Check is is not null\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).not.null\r",
 							"});\r",
-							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -31,22 +30,27 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"salary\": \"{{salary}}\",\r\n    \"age\": \"{{age}}\"\r\n}"
+					"raw": "{\r\n  \"ID\":10,\r\n  \"IDBook\": 10,\r\n  \"FirstName\": \"tm\",\r\n  \"LastName\": \"tm\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
 				},
 				"url": {
-					"raw": "{{url}}/create",
+					"raw": "{{url}}/Authors",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"create"
+						"Authors"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Update Employee",
+			"name": "Update Authors",
 			"event": [
 				{
 					"listen": "test",
@@ -55,10 +59,6 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"  pm.response.to.have.status(200);\r",
 							"});\r",
-							"pm.test(\"Successful response\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
-							"});\r",
-							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -78,12 +78,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/update/{{id}}",
+					"raw": "{{url}}/Authors/{{id}}",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"update",
+						"Authors",
 						"{{id}}"
 					]
 				}
@@ -91,21 +91,19 @@
 			"response": []
 		},
 		{
-			"name": "Get Employee",
+			"name": "Get Author",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var jsonData = pm.response.json();\r",
+							" var jsonData = pm.response.json();\r",
 							"\r",
-							"pm.test(\"Status code is 200\", function () {\r",
-							"  pm.response.to.have.status(200);\r",
+							"pm.test(\"Check author's credentials\", function () {\r",
+							"    pm.expect(jsonData.ID).to.eql(10);\r",
+							"    pm.expect(jsonData.FirstName).to.eql(\"First Name 10\");\r",
+							"    pm.expect(jsonData.LastName).to.eql(\"Last Name 10\");\r",
 							"});\r",
-							"pm.test(\"Successful response\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"success\");\r",
-							"});\r",
-							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -128,20 +126,20 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/employee/20",
+					"raw": "{{url}}/Authors/10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"employee",
-						"20"
+						"Authors",
+						"10"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete Employee",
+			"name": "Delete Authors",
 			"event": [
 				{
 					"listen": "test",
@@ -149,8 +147,7 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
 							"  pm.response.to.have.status(200);\r",
-							"});\r",
-							""
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -160,13 +157,19 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/delete/10",
+					"raw": "{{url}}/Authors/{{id}}?id=10",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"delete",
-						"10"
+						"Authors",
+						"{{id}}"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "10"
+						}
 					]
 				}
 			},
