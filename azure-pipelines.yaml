@@ -211,9 +211,8 @@ stages:
 - stage: Performance_Tests
   jobs:
     - job: PerformanceTest
-      displayName: Test JMeter
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'ubuntu-22.04'
       steps:
           - bash: |
               sudo apt-get install openjdk-11-jre-headless -y
