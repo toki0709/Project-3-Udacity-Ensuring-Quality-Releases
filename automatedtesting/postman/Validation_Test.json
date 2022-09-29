@@ -70,7 +70,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"{{newname}}\",\r\n    \"salary\": \"{{newsalary}}\",\r\n    \"age\": \"{{newage}}\"\r\n}",
+					"raw": "{\r\n    \"ID\": 10,\r\n    \"IDBook\": 10,\r\n    \"FirstName\": \"abcd\",\r\n    \"LastName\": \"abcd\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
