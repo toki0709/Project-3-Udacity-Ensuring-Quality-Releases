@@ -1,6 +1,8 @@
 # Bosch AI Talent Accelaraotor Nano Degree
 ## Project-3: Ensuring Quality Release
 
+[![Build Status](https://dev.azure.com/BoschDevOpsLearning/Project-3/_apis/build/status/toki0709.Project-3-Udacity?branchName=main)](https://dev.azure.com/BoschDevOpsLearning/Project-3/_build/latest?definitionId=6&branchName=main)
+
 ### Tools Used
 | Tools 	    |  Used for					|
 | ----------	| ------------------------:	|
